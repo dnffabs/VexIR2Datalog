@@ -32,6 +32,14 @@ class DatalogFacts:
         ##语句序号相关信息|语句序号
         self.irsbImark = {}
 
+        ##jump相关信息
+        self.jmp_vex_exp = []
+
+        ##call相关信息
+        self.call_vex_exp = []
+
+        ##return相关信息
+        self.ret_vex_exp = []
 
 
     def PrintFacts(self):
@@ -46,6 +54,9 @@ class DatalogFacts:
         print("binop_vex_exp:", self.binop_vex_exp)
         print("imm_vex_exp:", self.imm_vex_exp)
         print("exit_vex_exp:", self.exit_vex_exp)
+        print("jmp_vex_exp:", self.jmp_vex_exp)
+        print("call_vex_exp:", self.call_vex_exp)
+        print("ret_vex_exp:", self.ret_vex_exp)
         print("====================> End of Datalog Facts <=")
 
     def write_to_file(self, filedir):
@@ -119,3 +130,25 @@ class DatalogFacts:
                 tmp = str(key) + '\t' + str(self.irsbImark[key])
                 new.append(tmp)
             irsbImark.write('\n'.join(new))
+
+
+        new = []
+        with open(os.path.join(filedir, "jmp_vex_exp.facts"), "w") as jmp_vex_exp:
+            for item in self.jmp_vex_exp:
+                tmp = str(item[0]) + '\t' + str(item[1]) + '\t' + str(item[2]) + '\t' + str(item[3])
+                new.append(tmp)
+            jmp_vex_exp.write('\n'.join(new))
+
+        new = []
+        with open(os.path.join(filedir, "call_vex_exp.facts"), "w") as call_vex_exp:
+            for item in self.call_vex_exp:
+                tmp = str(item[0]) + '\t' + str(item[1]) + '\t' + str(item[2]) + '\t' + str(item[3])
+                new.append(tmp)
+            call_vex_exp.write('\n'.join(new))
+
+        new = []
+        with open(os.path.join(filedir, "ret_vex_exp.facts"), "w") as ret_vex_exp:
+            for item in self.ret_vex_exp:
+                tmp = str(item[0]) + '\t' + str(item[1]) + '\t' + str(item[2]) + '\t' + str(item[3])
+                new.append(tmp)
+            ret_vex_exp.write('\n'.join(new))

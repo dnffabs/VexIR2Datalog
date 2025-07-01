@@ -1,4 +1,5 @@
 from vex2Datalog.DatalogFacts import DatalogFacts
+from vex2Datalog.Jump_kinds import collect_jumpkinds
 from vex2Datalog.eid_generate import getTmpEid, getConsEid, getArgEid, getArgSize_Bit, getTmpSize, getRegEid, \
     getUnopEid, getBinopEid
 from vex2Datalog.operation import UnopDict, BiNopDict
@@ -52,7 +53,12 @@ class Parser:
     @classmethod
     def parse_block_vex(cls):
 
+
+        # 处理指令集
         for stmt in cls.stmts:
+            # a = a + 1
+            # if a == 15:
+            #     break
             match stmt.tag:
                 case 'Ist_IMark':
                     #指令顺序
@@ -105,6 +111,7 @@ class Parser:
                     offsIP = stmt.offsIP
                     dst_size_bit = stmt.dst.size
                     cls.facts.exit_vex_exp.append((cls.irsbAddr, cls.instructionAddr, cls.irOrder,0,guard_eid, dst_eid, jumpkind, offsIP, dst_size_bit))
+
 
                 case 'Ist_WrTmp':
                     cls.irOrder += 1
@@ -183,6 +190,15 @@ class Parser:
                                 unopeid = getUnopEid(bit_number, bvec, tmp1_eid, cls.facts, cls.iterator)
                                 tmp2_eid = getTmpEid(stmt.tmp, cls.facts, cls.iterator)
                                 cls.facts.set_loc_vex.append((cls.irsbAddr, cls.instructionAddr, cls.irOrder, bit_number, unopeid, tmp2_eid))
+
+                        case "Iex_ITE":
+                            # t6 = ITE(t15,t16,t17)
+                            print("this is a ITE stmt=======================>")
+                            print(stmt)
+
+        # 最后处理对应的jump指令
+        collect_jumpkinds(cls.irsb, cls.facts)
+
 
 
 

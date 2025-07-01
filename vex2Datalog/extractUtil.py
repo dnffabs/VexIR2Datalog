@@ -16,6 +16,7 @@ def extract_cfg(binary_path):
         project = angr.Project(binary_path, auto_load_libs=False)
         # 分析CFG
         print("Extracting CFG...")
+        # 使用静态分析的方式来构建CFG，速度更快
         cfg = project.analyses.CFGFast()
         return cfg, project.arch
     except Exception as e:
