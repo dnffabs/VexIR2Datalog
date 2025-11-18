@@ -1,0 +1,10 @@
+main	n	-16
+main	total	-20
+main	numbers	-40
+main	i	-12
+print_array	arr	0
+print_array	len	4
+print_array	i	-20
+sum_to_n	n	0
+sum_to_n	sum	-12
+sum_to_n	i	-16

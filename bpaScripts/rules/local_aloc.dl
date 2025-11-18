@@ -1,0 +1,9 @@
+.decl local_analysis(Func:symbol, Rbp:symbol, Operation:symbol, Offset:number, datasize:number)
+.input local_analysis
+
+.decl local_aloc(Func:symbol,Offset:number,datasize:number)
+local_aloc(Func,Offset,datasize) :-
+	local_analysis(Func,Rbp, Operation, Offset, datasize),
+	Operation = "Sub64".
+
+.output local_aloc(filename = "local_aloc.facts")

@@ -18,6 +18,8 @@ def extract_cfg(binary_path):
         print("Extracting CFG...")
         # 使用静态分析的方式来构建CFG，速度更快
         cfg = project.analyses.CFGFast()
+        # 输出cfg图
+
         return cfg, project.arch
     except Exception as e:
         raise ValueError(f"Failed to extract CFG: {e}")

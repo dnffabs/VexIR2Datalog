@@ -1,0 +1,14 @@
+.decl filter_set_loc_vex(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:number, RegEid:number)
+.input filter_set_loc_vex
+
+.decl filter_set_mem_vex(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:number, RegEid:number)
+.input filter_set_mem_vex
+
+.decl filter_get_mem_vex_exp(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:symbol, RegEid:number)
+.input filter_get_mem_vex_exp
+
+.decl imm_vex_exp(Size:number, Value:symbol, ConEid:number)
+.input imm_vex_exp
+
+
+

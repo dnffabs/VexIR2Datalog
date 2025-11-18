@@ -1,0 +1,62 @@
+.decl get_loc_vex_exp(RegID:symbol, RegEid:number)
+.input get_loc_vex_exp
+
+.decl binop_vex_exp(BitNumber:number, Nvec:symbol, Data1Eid:number, Data2Eid:number, LabelEid:number)
+.input binop_vex_exp
+
+.decl filter_set_loc_vex(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:number, RegEid:number)
+.input filter_set_loc_vex
+
+.decl filter_set_mem_vex(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:number, RegEid:number)
+.input filter_set_mem_vex
+
+.decl filter_get_mem_vex_exp(Func:symbol, IrsbAddr:number, InstructionAddr:number, IrOrder:number, Size:number, DataEid:symbol, RegEid:number)
+.input filter_get_mem_vex_exp
+
+.decl imm_vex_exp(Size:number, Value:symbol, ConEid:number)
+.input imm_vex_exp
+
+// 定义 rbp/ebp 别名
+.decl rbp_alias(RegName:symbol)
+rbp_alias("ebp").
+rbp_alias("rbp").
+
+// 找到函数中 rbp/ebp 的代理寄存器
+.decl rbp_agency(Func:symbol, RegEid:number, RegName:symbol, AgentEid:number)
+rbp_agency(Func, RegEid, RegName, AgentEid) :-
+    filter_set_loc_vex(Func, _, _, _, _, DataEid, RegEid),
+    rbp_alias(RegName),
+    get_loc_vex_exp(RegName, RegEid),
+    AgentEid = DataEid.
+
+
+.output rbp_agency
+// 提取 binop 操作
+.decl operation(Func:symbol, RegName:symbol, Nvec:symbol, ConEid:number)
+operation(Func, RegName, Nvec, ConEid) :-
+    rbp_agency(Func, _, RegName, AgentEid),
+    binop_vex_exp(_, Nvec, AgentEid, ConEid, _).
+.output operation
+
+// 收集立即数操作
+.decl collect_rbp_operations(Func:symbol, RegName:symbol, Nvec:symbol, Value:symbol, Size:number)
+collect_rbp_operations(Func, RegName, Nvec, Value, Size) :-
+    operation(Func, RegName, Nvec, ConEid),
+    imm_vex_exp(Size, Value, ConEid).
+.output collect_rbp_operations(filename="collect_rbp_operations.facts")
+
+//在32位系统中，先拿到esp的寄存器号，然后sub 4，拿到ebp的位置序号，然后再收集对应的边界信息
+//你需要拿到ebp的代理编号，然后才能获取到对应的边界信息
+//需要找到put(esp)
+
+
+
+
+
+
+
+
+
+
+
+

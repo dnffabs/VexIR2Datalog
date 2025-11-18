@@ -91,10 +91,10 @@ def getUnopEid(bit_number,nvec,data_eid,facts,eid_iter):
     return facts.unop_vex_exp[(bit_number, nvec, data_eid)]
 
 
-def getBinopEid(bit_number,nvec,data_eid1,data_eid2,facts,eid_iter):
+def getBinopEid(addr,bit_number,nvec,data_eid1,data_eid2,facts,eid_iter):
 
     new_eid = next(eid_iter)
-    facts.binop_vex_exp.append((bit_number, nvec, data_eid1, data_eid2, new_eid))
+    facts.binop_vex_exp.append((addr, nvec, data_eid1, data_eid2, new_eid))
     return new_eid
     # if (bit_number, nvec, data_eid1, data_eid2) not in facts.binop_vex_exp:
     #     facts.binop_vex_exp[(bit_number, nvec, data_eid1, data_eid2)] = next(eid_iter)

@@ -133,6 +133,9 @@ class Parser:
                             data_size_bit = getTmpSize(cls.irsb,stmt.tmp)
                             reg_eid = getRegEid(stmt.data.offset, data_size_bit // 8, cls.facts, cls.iterator)
                             cls.facts.set_loc_vex.append((cls.irsbAddr, cls.instructionAddr, cls.irOrder, data_size_bit//8, reg_eid, tmp_eid))
+                            #可能会出现t2 = GET:I32(esp)的情况，需要处理
+
+
                         case "Iex_Load":
                             # t6 = t15 + t16
                             addr = stmt.data.addr
@@ -156,7 +159,7 @@ class Parser:
                             else:
                                 bit_number, bvec = BiNopDict[stmt.data.op]
                             print(bit_number,bvec)
-                            binopeid = getBinopEid(bit_number,bvec,arg0_eid,arg1_eid,cls.facts,cls.iterator)
+                            binopeid = getBinopEid(cls.instructionAddr,bit_number,bvec,arg0_eid,arg1_eid,cls.facts,cls.iterator)
                             tmp2_eid = getTmpEid(stmt.tmp, cls.facts, cls.iterator)
                             cls.facts.set_loc_vex.append((cls.irsbAddr, cls.instructionAddr, cls.irOrder, bit_number, binopeid, tmp2_eid))
                         case "Iex_Unop":

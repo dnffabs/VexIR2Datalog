@@ -1,0 +1,93 @@
+.decl addr_func(func:symbol, addr:number, size:number)
+.decl func_range(func:symbol, start_addr:number, end_addr:number)
+.input addr_func
+
+func_range(Func, Start, End) :- addr_func(Func, Start, Size), End = Start + Size.
+.output func_range(filename="func_range.facts")
+
+//define libfunc
+.decl lib_func(func_name: symbol, is_return_void:number)
+lib_func("aaaa",0).
+
+//define compiler_func
+.decl compiler_build_in(func: symbol)
+.input compiler_build_in
+
+// Exclude compiler built-in functions
+.decl filtered_func(func:symbol, start_addr:number, end_addr:number)
+filtered_func(Func, Start, End) :-
+    func_range(Func, Start, End),
+    !compiler_build_in(Func).
+
+.output filtered_func(filename="filtered_func.facts")
+
+//定义需要传入的Datalog文件类型
+
+//需要筛选的函数范围
+.decl set_loc_vex(irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:number, regEid:number)
+.input set_loc_vex
+
+
+.decl exit_vex_exp(irsbAddr:number, instructionAddr:number, irOrder:number, num:number, guard_eid:number, dst_eid:number, jumpkind:symbol, offsIP:number,dst_size_bit:number)
+.input exit_vex_exp
+
+//需要筛选的函数范围
+.decl set_mem_vex(irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:number, regEid:number)
+.input set_mem_vex
+
+.decl get_loc_vex_exp(regid:symbol,regEid:number)
+.input get_loc_vex_exp
+
+.decl binop_vex_exp(bit_number:number, nvec:symbol,data1Eid:number,data2Eid:number,labelEid:number)
+.input binop_vex_exp
+
+//需要筛选函数范围
+.decl get_mem_vex_exp(irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:symbol, regEid:number)
+.input get_mem_vex_exp
+
+.decl filter_set_loc_vex(func:symbol, irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:number, regEid:number)
+.output filter_set_loc_vex(filename="filter_set_loc_vex.facts")
+
+//4193304即0x400000,在关闭pie的时候不需要使用.开启pie的时候需要将0改为4193304
+// 筛选出在 func 范围内的 set_loc_vex，并在 start 和 end 上加上 4194304即0x400000，以匹配函数的实际地址
+filter_set_loc_vex(func, irsbAddr, instructionAddr, irOrder, size, dataEid, regEid) :-
+    set_loc_vex(irsbAddr, instructionAddr, irOrder, size, dataEid, regEid),
+    filtered_func(func, start, end),
+    irsbAddr >= (start + 4194304),
+    irsbAddr <= (end + 4194304).
+
+.decl filter_set_mem_vex(func:symbol, irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:number, regEid:number)
+.output filter_set_mem_vex(filename="filter_set_mem_vex.facts")
+
+filter_set_mem_vex(func, irsbAddr, instructionAddr, irOrder, size, dataEid, regEid) :-
+    set_mem_vex(irsbAddr, instructionAddr, irOrder, size, dataEid, regEid),
+    filtered_func(func, start, end),
+    irsbAddr >= (start + 4194304),
+    irsbAddr <= (end + 4194304).
+
+.decl filter_get_mem_vex_exp(func:symbol, irsbAddr:number, instructionAddr:number, irOrder:number, size:number, dataEid:symbol, regEid:number)
+.output filter_get_mem_vex_exp(filename="filter_get_mem_vex_exp.facts")
+
+filter_get_mem_vex_exp(func, irsbAddr, instructionAddr, irOrder, size, dataEid, regEid) :-
+    get_mem_vex_exp(irsbAddr, instructionAddr, irOrder, size, dataEid, regEid),
+    filtered_func(func, start, end),
+    irsbAddr >= (start + 4194304),
+    irsbAddr <= (end + 4194304).
+
+
+.decl filter_exit_vex_exp(func:symbol, irsbAddr:number, instructionAddr:number, irOrder:number, num:number, guard_eid:number, dst_eid:number, jumpkind:symbol,offsIP:number,dst_size_bit:number)
+.output filter_exit_vex_exp(filename="filter_exit_vex_exp.facts")
+// 筛选出在 func 范围内的 exit_vex_exp，并在 start 和 end 上加上 4194304即0x400000，以匹配函数的实际地址
+filter_exit_vex_exp(func,irsbAddr, instructionAddr, irOrder, num, guard_eid, dst_eid, jumpkind, offsIP, dst_size_bit) :-
+    exit_vex_exp(irsbAddr, instructionAddr, irOrder, num, guard_eid, dst_eid, jumpkind, offsIP ,dst_size_bit),
+    filtered_func(func, start, end),
+    irsbAddr >= (start + 4194304),
+    irsbAddr <= (end + 4194304).
+
+
+
+
+
+
+
+

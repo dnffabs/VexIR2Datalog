@@ -1,0 +1,29 @@
+//先导入对应的data.facts文件
+
+.decl data(start:number, end:number, size:number)
+.input data
+
+decl imm_vex_exp(size:number,boundary:number,new_eid:number)
+.input imm_vex_exp
+
+//导入对应的gobal_analysis.facts文件
+.decl gobal_analysis(boundary:number)
+.input gobal_analysis
+
+//定义规则，筛选出符合条件的data段内的边界
+.decl filter_gobal_boundary(boundary:number)
+filter_gobal_boundary(boundary) :-
+    data(start, end, size),
+    gobal_analysis(boundary),
+    start+4194304 <= boundary,
+    end+4194304 >= boundary.
+
+filter_gobal_boundary(boundary) :-
+    imm_vex_exp(size,boundary,new_eid),
+    start+4194304 <= boundary,
+    end+4194304 >= boundary.
+
+//输出结果
+.output filter_gobal_boundary(filename="filter_gobal_boundary.facts")
+
+//比如0x0000000000601040与0x00000000000201040相差0x400000==4194304

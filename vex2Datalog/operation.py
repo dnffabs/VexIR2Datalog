@@ -101,5 +101,5 @@ TypeDict_Byte = {
 
 # size_bit 表
 TypeDict_Bit = {
-    'Ity_I1': 1, 'Ity_I8': 8, 'Ity_I16': 16, 'Ity_I32': 32, 'Ity_I64': 64, 'Ity_I128': 128
+    'Ity_I1': 1, 'Ity_I8': 8, 'Ity_I16': 16, 'Ity_I32': 32, 'Ity_I64': 64, 'Ity_I128': 128, 'Ity_F32': 32, 'Ity_F64': 64,
 }
